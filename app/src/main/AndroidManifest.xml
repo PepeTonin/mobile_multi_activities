@@ -13,7 +13,7 @@
         android:theme="@style/Theme.MultiActivities"
         tools:targetApi="31">
         <activity
-            android:name=".DadosUsuario"
+            android:name=".CalcIMC"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
