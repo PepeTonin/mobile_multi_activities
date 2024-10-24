@@ -2,6 +2,8 @@ package com.example.multiactivities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,23 +13,25 @@ import android.widget.Toast;
 
 public class CalcIMC extends AppCompatActivity {
 
-    private EditText inputAltura;
-    private EditText inputPeso;
-    private Button btnSalvar;
+    private EditText inputNome, inputAltura, inputPeso;
+    private Button btnVoltar, btnCalcular;
     private TextView textResultImc;
 
+    private String nome, resultImc;
+    private Float altura, peso, imc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
+        inputNome = findViewById(R.id.inputNome);
         inputAltura = findViewById(R.id.inputAltura);
         inputPeso = findViewById(R.id.inputPeso);
-        btnSalvar = findViewById(R.id.btnSalvar);
         textResultImc = findViewById(R.id.tvResultImc);
 
-        btnSalvar.setOnClickListener(new View.OnClickListener() {
+        btnCalcular = findViewById(R.id.btnCalcular);
+        btnCalcular.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -39,14 +43,31 @@ public class CalcIMC extends AppCompatActivity {
                     return;
                 }
 
-                Float altura = convertStringToFloat(stringAltura);
-                Float peso = convertStringToFloat(stringPeso);
-                Float imc = calcImc(peso, altura);
+                nome = inputNome.getText().toString();
+                altura = convertStringToFloat(stringAltura);
+                peso = convertStringToFloat(stringPeso);
+                imc = calcImc(peso, altura);
+                resultImc = resultImc(imc);
 
                 textResultImc.setText("Seu IMC é: " + imc.toString() + "\nClassificação: " + resultImc(imc));
+
+                SQLiteDatabase bd = openOrCreateDatabase("app", MODE_PRIVATE, null);
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("nome", nome);
+                contentValues.put("imc", imc);
+                contentValues.put("resultado", resultImc);
+                bd.insert("pacientes", null, contentValues);
+                Toast.makeText(getApplicationContext(), "Salvo com sucesso", Toast.LENGTH_SHORT).show();
             }
         });
 
+        btnVoltar = findViewById(R.id.btnVoltar);
+        btnVoltar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     public Float calcImc(Float peso, Float altura) {
@@ -63,9 +84,9 @@ public class CalcIMC extends AppCompatActivity {
         } else if (imc < 34.9) {
             return "Obesidade grau 1";
         } else if (imc < 39.9) {
-            return "Obesidade grau 2 (severa)";
+            return "Obesidade grau 2";
         } else {
-            return "Obesidade grau 3 (mórbida)";
+            return "Obesidade grau 3";
         }
     }
 

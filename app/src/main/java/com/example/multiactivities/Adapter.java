@@ -8,8 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.multiactivities.R;
-import com.example.multiactivities.Paciente;
 import java.util.List;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
@@ -31,7 +29,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Paciente paciente = listaPacientes.get(position);
         holder.tvNome.setText(paciente.getNome());
-        holder.tvImc.setText(paciente.getImc().toString());
+        holder.tvImc.setText(String.format("%.2f", paciente.getImc()));
         holder.tvResultado.setText(paciente.getResultImc());
     }
 
